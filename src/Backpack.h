@@ -71,7 +71,8 @@ private:
 
 void Backpack::showItemList(std::ostream &os) const {
     for (auto item: items) {
-        os << item.first.getName() << " " << item.first.getEffect() << " " << item.first.getCooldown() << " " << item.second << " " << std::endl;
+        os << item.first.getName() << " " << item.first.getEffect() << " "
+        << item.first.getCooldown() << " " << item.second << " " << std::endl;
     }
     os << "#" << std::endl;
 }
@@ -81,7 +82,10 @@ void Backpack::loadItemList(std::string name, int effect, int cooldown, int num)
 }
 
 void Backpack::printItemList(bool atFightScene) {
+    PosControl::setPos(9, 17);
+    cout <<"[物品]";
     for (int i = 0; i < size; i++) {
+        PosControl::setPos(10+i,17);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
         std::cout << "\t" << "[" << i << "] ";
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
@@ -115,13 +119,13 @@ void Backpack::progress0() {
     items.clear();
 
     for (int i = 0; i < 6; ++i) {
-        Item LilHealPotion("LittleHealPotion", 10, 50);
+        Item LilHealPotion("回春丹", 10, 50);
         addItem(LilHealPotion);
     }
 
     // 创建2个 WormVirus.exe 物品，每个让怪物扣血80，冷却30秒
     for (int i = 0; i < 5; ++i) {
-        Item MagicAttack("MagicAttack", -10, 50);
+        Item MagicAttack("爆破灵宝", -10, 50);
         addItem(MagicAttack);
     }
 }
@@ -131,13 +135,13 @@ void Backpack::progress4() {
 
     // 创建3个 MysteriousPotion 物品，每个回血50，冷却20秒
     for (int i = 0; i < 3; ++i) {
-        Item mysteriousPotion("MysteriousPotion", 50, 20);
+        Item mysteriousPotion("大回春丹", 50, 20);
         addItem(mysteriousPotion);
     }
 
     // 创建2个 WormVirus.exe 物品，每个让怪物扣血80，冷却30秒
     for (int i = 0; i < 2; ++i) {
-        Item wormVirus("WormVirus.exe", -80, 30);
+        Item wormVirus("大爆破灵宝", -80, 30);
         addItem(wormVirus);
     }
 }

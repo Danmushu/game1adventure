@@ -29,7 +29,7 @@ namespace PosControl {
     struct Size {
         int width;
         int height;
-    } size = {1020, 860};
+    } size = {1200, 860};
 
     void centerWindow() {
         HWND hwnd = GetForegroundWindow();

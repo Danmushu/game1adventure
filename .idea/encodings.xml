@@ -3,7 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/Assets/Enemies/.enemy4" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/Creature.h" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/FightScene.h" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/Fight.h" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/GameController.h" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/Interface.h" charset="GBK" />
     <file url="PROJECT" charset="GBK" />

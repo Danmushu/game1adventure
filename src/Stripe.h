@@ -20,7 +20,7 @@ public:
 
     Stripe(int length, std::string word, char effect);
 
-    void putWord(const string);
+    void putWord(const string, int level);
 
     void changeColor(int pos, int co);
 
@@ -76,7 +76,8 @@ void Stripe::changeState(bool state) {
 
 }
 
-void Stripe::putWord(const string s) {
+// 增加根据等级增加伤害的逻辑
+void Stripe::putWord(const string s, int level) {
     if (s.empty()){
 
         random_device seed;//硬件生成随机数种子
@@ -89,7 +90,24 @@ void Stripe::putWord(const string s) {
         for (int i = 0; i < randint; i ++){
             this -> word += "0";
         }
-        this->word += "121";
+        switch (level) {
+            case 1:
+                this->word += "242";
+                break;
+            case 2:
+                this->word += "474";
+                break;
+            case 3:
+                this->word += "686";
+                break;
+            case 4:
+                this->word += "898";
+                break;
+            case 5:
+                this->word += "999";
+                break;
+        }
+//        this->word += "121";
         for (int i = 0; i < 18 - randint; i ++){
             this -> word += "0";
         }
@@ -97,12 +115,7 @@ void Stripe::putWord(const string s) {
 
     this->length = 20;
 
-//    for (int i = 0; i < position; i++)std::cout << ' ';
-//        for (int i = 0; i < length; i++) {
-//            cout << ' ';
-//        }
-
-    PosControl::setPos(29, (int) (50 - length/2));
+    PosControl::setPos(7, (int) (40 - length/2));
     for (int i = 0; i < length; i++) {
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color[i]);
         cout << word[i];

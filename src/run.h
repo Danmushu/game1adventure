@@ -4,13 +4,6 @@
 
 #ifndef GAMETOWER_BEHAVIOR_H
 #define GAMETOWER_BEHAVIOR_H
-//#define 校门 8,4
-//#define 迎新大厅 6,4
-//#define 庆功宴会厅 4,4
-//#define 圣坛 2,4
-//#define 战前准备营地 4,2
-//#define 秘密会议室 4,6
-//#define 神秘的魔法墓地 2,6
 // 定义宏，用于判断地图(x, y)位置是否可进入
 #define ifAccessible(x, y) dynamic_cast<Road*>(map.getLocation(x,y))->getIsAccessible()
 
@@ -33,7 +26,7 @@
 #include "Player.h"
 #include "Interface.h"
 #include "Map.h"
-#include "FightScene.h"
+#include "Fight.h"
 
 using std::cout, std::endl;
 
@@ -235,55 +228,58 @@ void run(Player &player) {
                         system("pause");
                     } else {
                         // 根据进度触发不同的场景或战斗
-                        if (map.getProgress() == 2 && pos.line == 4 && pos.column == 4) {
+                        if (map.getProgress() == 2 && pos.line == 6 && pos.column == 4) {
                             printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
                             system("pause");
                             system("cls");
-                            lastPos = {4, 4}; // 宝光阁
-                            pos = {4, 6}; // 秘境二层
+                            lastPos = {6, 4}; // 宝光阁
+                            pos = {4, 4}; // 秘境二层
                             printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
-                        } else if (map.getProgress() == 2 && pos.line == 4 && pos.column == 6) {
-                            lastPos = {4, 4};
+                        } else if (map.getProgress() == 2 && pos.line == 4 && pos.column == 4) {
+                            lastPos = {6, 4};
+                            pos = {6, 4};
+                            printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
+                            system("pause");
+                            system("cls");
                             pos = {4, 4};
                             printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
-                            system("pause");
-                            system("cls");
-                            pos = {4, 6};
-                            printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
-                        } else if (map.getProgress() == 3 && pos.line != 2 && pos.column != 6) {
+                        } else if (map.getProgress() == 3 && pos.line != 2 && pos.column != 5) {
                             printMsg("./Assets/Scene/Other/Faith.txt");
-                        } else if (map.getProgress() >= 4 && pos.line == 4 && pos.column == 4) {
-                            if (getIsLocked(2, 4))
+                        } else if (map.getProgress() >= 4 && pos.line == 6 && pos.column == 4) {
+                            if (getIsLocked(0, 4))
                                 printMsg("./Assets/Scene/Other/Final.txt");
                             else printMsg("./Assets/Scene/Default/" + getPlaceName(pos.line, pos.column) + ".txt");
-                        } else if (map.getProgress() < 4 && pos.line == 2 && pos.column == 4) {
+                        } else if (map.getProgress() < 4 && pos.line == 0 && pos.column == 4) {
                             printMsg("./Assets/Scene/Other/check.txt");
                         } else printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
                         system("pause");
 
                         // 特定情节推进和状态更新
-                        if (map.getProgress() == 4 && pos.line == 4 && pos.column == 2 && !getHasDone(4, 2)) {
+                        if (map.getProgress() == 4 && pos.line == 6 && pos.column == 2 && !getHasDone(6, 2)) {
                             player.getBackpack().progress4();
-                            dynamic_cast<Place *>(map.getLocation(4, 2))->setHasDone(true);
-                            dynamic_cast<Place *>(map.getLocation(2, 4))->setIsLocked(false);
-                            dynamic_cast<Place *>(map.getLocation(4, 4))->setIsLocked(true);
+                            dynamic_cast<Place *>(map.getLocation(6, 2))->setHasDone(true);
+                            dynamic_cast<Place *>(map.getLocation(0, 4))->setIsLocked(false);
+                            dynamic_cast<Place *>(map.getLocation(6, 4))->setIsLocked(true);
                         }
 
                         // 判断是否进入战斗场景
-                        if ((pos.line == 4 && pos.column == 2) || (pos.line == 4 && pos.column == 4)) {
+                        if ((pos.line == 6 && pos.column == 2) || (pos.line == 6 && pos.column == 4)) {
                             // 特定条件下无需进入战斗场景
                         } else { // 进入战斗场景
                             Backpack backupBackpack = player.getBackpack();
                             int backupCurrHP = player.getCurrHP();
 
                             // 创建战斗场景
-                            auto *currFightScene = new FightScene(getPlaceName(pos.line, pos.column), map.getProgress());
+                            auto *currFightScene = new Fight(getPlaceName(pos.line, pos.column), map.getProgress());
                             currFightScene->loadScene(player); // 加载场景
 
                             // 检查战斗结果
-                            if (FightScene::checkWin(player)) {
+                            if (Fight::checkWin(player)) {
                                 system("cls");
-
+                                int level = player.getLevel();
+                                level++;
+                                player.setLevel(level);
+                                int x = pos.line, y = pos.column;
                                 map.setHasDone(pos.line, pos.column); // 更新任务完成状态
                                 cout << "我";
 //                                player.playerWordlist(player.getMap().getProgress() + 1);
@@ -297,6 +293,7 @@ void run(Player &player) {
                                 printMsg("./Assets/Scene/Other/Failed.txt");
                                 player.setCurrHP(backupCurrHP); // 恢复玩家状态
                                 player.setBackpack(backupBackpack);
+
                                 system("pause");
                             }
                             delete currFightScene; // 释放内存

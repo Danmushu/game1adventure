@@ -10,7 +10,7 @@ include_directories(.)
 
 add_executable(Game
 
-        src/FightScene.h
+        src/Fight.h
         src/Location.h
         src/Main.cpp
         src/Map.h

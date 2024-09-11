@@ -27,7 +27,7 @@ public:
     // 设置指定位置的任务已完成状态，并更新游戏进度
     void setHasDone(int line, int column) {
         dynamic_cast<Place*>(locations[line][column])->setHasDone(true);  // 设置指定位置的任务已完成
-        if (line == 2 && column == 4) dynamic_cast<Place*>(locations[4][4])->setHasDone(true);  // 如果在指定位置，设置另一位置的任务已完成
+        if (line == 0 && column == 4) dynamic_cast<Place*>(locations[6][4])->setHasDone(true);  // 如果在指定位置，设置另一位置的任务已完成
         setProgress(currProgress + 1);  // 更新进度
     }
     void setProgress(int progress);  // 设置当前进度并更新地图状态
@@ -150,7 +150,7 @@ void Map::setProgress(int progress) {
     // 根据当前进度解锁特定位置
     switch (progress) { // 倒序放置，当导入新进度时，前面的场景也能解锁
 //        case 4:
-//            dynamic_cast<Place*>(locations[4][2])->setIsLocked(false);秘境核心
+//            dynamic_cast<Place*>(locations[4][2])->setIsLocked(false);秘境空间夹层
 //            dynamic_cast<Place*>(locations[2][6])->setHasDone(true);秘境三层
 //            dynamic_cast<Place*>(locations[4][4])->setIsLocked(true); 宝光阁
 //            dynamic_cast<Place*>(locations[4][4])->setHasDone(true); 宝光阁
@@ -169,12 +169,12 @@ void Map::setProgress(int progress) {
 //            dynamic_cast<Place*>(locations[8][4])->setIsLocked(false);秘境入口
 
         case 4:
-            dynamic_cast<Place*>(locations[0][4])->setIsLocked(false);
+            dynamic_cast<Place*>(locations[6][2])->setIsLocked(true);
             dynamic_cast<Place*>(locations[2][4])->setHasDone(true);
             dynamic_cast<Place*>(locations[6][4])->setIsLocked(true);
             dynamic_cast<Place*>(locations[6][4])->setHasDone(true);
         case 3:
-            dynamic_cast<Place*>(locations[2][5])->setIsLocked(false);
+            dynamic_cast<Place*>(locations[2][4])->setIsLocked(false);
             dynamic_cast<Place*>(locations[6][4])->setHasDone(false);
             dynamic_cast<Place*>(locations[4][4])->setHasDone(true);
         case 2:

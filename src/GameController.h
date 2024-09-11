@@ -78,19 +78,6 @@ public:
                 }
             }
             dataFile.clear();
-//            if (type == "WordList") {
-//                int length;
-//                string word;
-//                int effect;
-//                while (dataFile >> length) {
-//                    if (length == 0) {
-//                        break;
-//                    }
-//                    dataFile >> word >> effect;
-//                    player.loadWordList(length, word, effect);
-//                }
-//            }
-            dataFile.clear();
             dataFile >> type;
             if (type == "Map") {
                 int progress;
@@ -119,13 +106,11 @@ public:
                 case 1:
                     player.getBackpack().progress0();
                     player.setLevel(1);
-//                    player.playerWordlist(player.getMap().getProgress() + 1);
                     saveData();
             }
         } else {
             player.getBackpack().progress0();
             player.setLevel(1);
-//            player.playerWordlist(player.getMap().getProgress() + 1);
             saveData();
         }
         system("cls");

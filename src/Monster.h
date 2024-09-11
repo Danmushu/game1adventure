@@ -37,6 +37,7 @@ void Monster::readMonsterData(int monsterNumber) {
     std::string word;
     wordList.clear();
     cout << "reading monster ..." << endl;
+    file >> name;
     file >> hp;
     file >> damage;
 
