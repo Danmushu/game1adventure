@@ -1,6 +1,3 @@
-//
-// Created by Jiarong on 2023/8/22.
-//
 
 #ifndef GAMETOWER_INTERFACE_H
 #define GAMETOWER_INTERFACE_H

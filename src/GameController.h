@@ -1,6 +1,3 @@
-//
-// Created by Jiarong on 2023/8/22.
-//
 
 #ifndef GAMETOWER_DATA_H
 #define GAMETOWER_DATA_H
@@ -20,7 +17,7 @@ private:
 public:
     Game(Player& player):player(player){}
 
-    bool dataExist(const string &name) {
+    static bool dataExist(const string &name) {
         string fileName = name + ".dat";  // 构造数据文件的名称
         std::ifstream dataFile("./save/"+fileName);  // 尝试打开文件
         bool isOpen = dataFile.is_open();  // 检查文件是否成功打开
@@ -28,7 +25,7 @@ public:
         return isOpen;  // 返回文件是否存在
     }
 
-// 保存玩家数据到文件
+    // 保存玩家数据到文件
     void saveData() {
         // 创建数据文件，如果文件已存在则覆盖
         std::ofstream dataFile("./save/"+player.getName() + ".dat", std::ios::trunc);
@@ -40,14 +37,12 @@ public:
         dataFile << "Backpack" << endl;
         player.getBackpack().showItemList(dataFile);
 
-        //player.showWordList(dataFile);
         // 保存玩家的地图进度
         dataFile << "Map" << endl;
         dataFile << player.getMap().getProgress() << endl;
         player.getMap().showMap(dataFile);
     }
-
-// 加载玩家数据
+    // 加载玩家数据
     void loadData() {
         if (dataExist(player.getName())) {  // 如果数据文件存在
             std::ifstream dataFile("./save/"+player.getName() + ".dat");  // 打开文件

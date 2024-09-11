@@ -1,7 +1,3 @@
-//
-// Created by Jiarong on 2023/8/21.
-//
-
 #ifndef GAMETOWER_MAP_H
 #define GAMETOWER_MAP_H
 
@@ -57,7 +53,7 @@ Map::Map() {
 //    locations[4][2] = new Place("秘境夹层", 15, 29);  // 秘境空间夹层，默认锁定
 //    locations[4][3] = new Road(true);  // 连接秘境空间夹层的道路，已解锁
 //    locations[4][5] = new Road(true);  // 连接宝光阁的另一条道路，已解锁
-//    locations[4][6] = new Place("秘境二层", 15, 47);  // 秘密秘境二层，默认锁定
+//    locations[4][6] = new Place("秘境二层", 15, 47);  // 秘境二层，默认锁定
 //    locations[2][5] = new Road(true);  // 连接秘境核心的道路，已解锁
 //    locations[2][6] = new Place("秘境三层",11, 47);  // 秘境三层，默认锁定
 

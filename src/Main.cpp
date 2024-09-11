@@ -1,13 +1,7 @@
-//
-// Created by Jiarong on 2023/8/21.
-//
-
-// A MUD Game
 
 #define NOMINMAX  // 防止 Windows.h 头文件定义 min 和 max 宏，避免与标准库中的 std::min/std::max 冲突
 
 #include <iostream>  // 提供标准输入输出功能
-#include <csignal>  // 提供信号处理功能
 #include "Interface.h"  // 包含游戏界面相关的函数和类
 #include "GameController.h"  // 包含游戏数据相关的类和函数
 
@@ -53,12 +47,12 @@ void helloPlayer(const string& name){
 
 int main() {
     //setDPI();  // 如果需要，可以设置 DPI 缩放，暂时注释掉
-    PosControl::centerWindow();
-    PosControl::HideCursor();
-    Player player1("123");
-    Game game1(player1);
-    game1.newGame();
-    return 0;
+//    PosControl::centerWindow();
+//    PosControl::HideCursor();
+//    Player player1("123");
+//    Game game1(player1);
+//    game1.newGame();
+//    return 0;
     // 显示欢迎页面
     welcomePage();
 

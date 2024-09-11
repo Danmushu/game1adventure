@@ -1,6 +1,3 @@
-//
-// Created by Jiarong on 2023/8/29.
-//
 
 #ifndef GAMETOWER_BEHAVIOR_H
 #define GAMETOWER_BEHAVIOR_H
@@ -178,15 +175,6 @@ void run(Player &player) {
                 Map::printMap(); // 重新打印地图
                 break;
             }
-                // 按键'l'，查看词汇列表
-            case 'l':
-            case 'L': {
-                system("cls"); // 清屏
-                player.printWordList(); // 打印词汇列表
-                system("pause");
-                Map::printMap(); // 重新打印地图
-                break;
-            }
                 // 按键'e'，查看帮助信息
             case 'e':
             case 'E': {
@@ -197,8 +185,8 @@ void run(Player &player) {
                 break;
             }
                 // 按键'n'，查看怪物描述
-            case 'n':
-            case 'N': {
+            case 'u':
+            case 'U': {
                 system("cls"); // 清屏
                 printMsg("./Assets/Enemies/.enemyDescription"); // 打印怪物描述
                 system("pause");
@@ -213,7 +201,7 @@ void run(Player &player) {
                 // 检查当前位置是否被锁定
                 if (getIsLocked(pos.line, pos.column)) {
                     // 根据地图进度显示不同的内容
-                    if (map.getProgress() < 3 && pos.line == 4 && pos.column == 2) {
+                    if (map.getProgress() < 3 && pos.line == 6 && pos.column == 2) {//秘境空间夹层
                         printMsg("./Assets/Scene/Other/locked.txt");
                     } else if (map.getProgress() == 4 || map.getProgress() == 5) {
                         printMsg("./Assets/Scene/Default/" + getPlaceName(pos.line, pos.column) + ".txt");
@@ -228,43 +216,43 @@ void run(Player &player) {
                         system("pause");
                     } else {
                         // 根据进度触发不同的场景或战斗
-                        if (map.getProgress() == 2 && pos.line == 6 && pos.column == 4) {
+                        if (map.getProgress() == 2 && pos.line == 6 && pos.column == 4) {// 宝光阁
                             printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
                             system("pause");
                             system("cls");
                             lastPos = {6, 4}; // 宝光阁
                             pos = {4, 4}; // 秘境二层
                             printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
-                        } else if (map.getProgress() == 2 && pos.line == 4 && pos.column == 4) {
-                            lastPos = {6, 4};
-                            pos = {6, 4};
+                        } else if (map.getProgress() == 2 && pos.line == 4 && pos.column == 4) {// 秘境二层
+                            lastPos = {6, 4};// 宝光阁
+                            pos = {6, 4};// 宝光阁
                             printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
                             system("pause");
                             system("cls");
-                            pos = {4, 4};
+                            pos = {4, 4};// 秘境二层
                             printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
-                        } else if (map.getProgress() == 3 && pos.line != 2 && pos.column != 5) {
+                        } else if (map.getProgress() == 3 && pos.line != 2 && pos.column != 4) {// 秘境三层
                             printMsg("./Assets/Scene/Other/Faith.txt");
-                        } else if (map.getProgress() >= 4 && pos.line == 6 && pos.column == 4) {
-                            if (getIsLocked(0, 4))
+                        } else if (map.getProgress() >= 4 && pos.line == 6 && pos.column == 4) {// 宝光阁
+                            if (getIsLocked(0, 4)) // 秘境核心
                                 printMsg("./Assets/Scene/Other/Final.txt");
                             else printMsg("./Assets/Scene/Default/" + getPlaceName(pos.line, pos.column) + ".txt");
-                        } else if (map.getProgress() < 4 && pos.line == 0 && pos.column == 4) {
+                        } else if (map.getProgress() < 4 && pos.line == 0 && pos.column == 4) {// 秘境核心
                             printMsg("./Assets/Scene/Other/check.txt");
                         } else printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
                         system("pause");
 
                         // 特定情节推进和状态更新
                         if (map.getProgress() == 4 && pos.line == 6 && pos.column == 2 && !getHasDone(6, 2)) {
-                            player.getBackpack().progress4();
-                            dynamic_cast<Place *>(map.getLocation(6, 2))->setHasDone(true);
-                            dynamic_cast<Place *>(map.getLocation(0, 4))->setIsLocked(false);
-                            dynamic_cast<Place *>(map.getLocation(6, 4))->setIsLocked(true);
+                            player.getBackpack().progress4();// 秘境空间夹层
+                            dynamic_cast<Place *>(map.getLocation(6, 2))->setHasDone(true);// 秘境空间夹层
+                            dynamic_cast<Place *>(map.getLocation(0, 4))->setIsLocked(true);// 秘境核心
+                            dynamic_cast<Place *>(map.getLocation(6, 4))->setIsLocked(true);// 宝光阁
                         }
 
                         // 判断是否进入战斗场景
                         if ((pos.line == 6 && pos.column == 2) || (pos.line == 6 && pos.column == 4)) {
-                            // 特定条件下无需进入战斗场景
+                            // 特定条件下无需进入战斗场景 // 秘境空间夹层 // 宝光阁位置
                         } else { // 进入战斗场景
                             Backpack backupBackpack = player.getBackpack();
                             int backupCurrHP = player.getCurrHP();
@@ -279,10 +267,8 @@ void run(Player &player) {
                                 int level = player.getLevel();
                                 level++;
                                 player.setLevel(level);
-                                int x = pos.line, y = pos.column;
                                 map.setHasDone(pos.line, pos.column); // 更新任务完成状态
                                 cout << "我";
-//                                player.playerWordlist(player.getMap().getProgress() + 1);
                                 printMsg("./Assets/Scene/Other/victory.txt");
                                 system("cls");
                                 cout << "我";

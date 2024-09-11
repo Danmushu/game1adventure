@@ -76,9 +76,6 @@ public:
         else return 1;
         return 0;
     }
-
-
-
 private:
     //应该用不到这个东西。玩家伤害结算都靠每个word的wordDamage
     Map map;
@@ -97,43 +94,21 @@ Player::Player(string name) : Creature(100, name) {
 
 void Player::printStatus() const {
     PosControl::setPos(0, 0);
-    cout << "\33[47;33m" << "木" << "\33[0m" << endl;
+    cout << "\33[46;33m" << "木" << "\33[0m" << endl;
     cout << endl;
-    cout << "\33[47;33m" << "HP: " << "\33[0m" << currHP << endl;
+    cout << "\33[46;33m" << "HP: " << "\33[0m" << currHP << endl;
 
 
     cout << endl;
-    cout << "按 \33[31m[B] \33[0m查看背包" << endl;
-    cout << "按 \33[31m[L] \33[0m查看攻击词" << endl;
-    cout << "按 \33[31m[E] \33[0m查看帮助" << endl;
-    cout << "按 \33[31m[N] \33[0m查看怪物说明" << endl;
-    cout << "按 \33[31m[W][A][S][D] \33[0m或 \33[31m[↑][←][↓][→] \33[0m移动" << endl;
-    cout << "按 \33[31m[F5] \33[0m刷新地图" << endl;
+    cout<< "\33[31m[[按键说明]]\33[0m" <<endl;
+    cout << "\33[31m[B] \33[0m打开背包" << endl;
+    cout << "\33[31m[E] \33[0m查看帮助" << endl;
+    cout << "\33[31m[U] \33[0m怪物说明" << endl;
+    cout << "\33[31m[W][A][S][D] \33[0m或 \33[31m[↑][←][↓][→] \33[0m移动" << endl;
+    cout << "\33[31m[F5] \33[0m刷新地图" << endl;
     cout << endl;
-    cout << "按 \33[31m[Q] \33[0m退出游戏" << endl;
+    cout << "\33[31m[Q] \33[0m退出游戏" << endl;
 
 }
-
-//void Player::playerWordlist(int playerNumber) {
-//    int wordDamage[6] = {0, 1, 3, 5, 10, 20};
-//    std::string numberString = std::to_string(playerNumber);
-//    std::string filePath = "./Assets/.wordlistAttack";
-//    std::ifstream file(filePath);
-//    std::string line;
-//
-//    int lineNumber = 1;
-//    while (std::getline(file, line)) {
-//        if (lineNumber == playerNumber) {
-//            std::istringstream iss(line);
-//            std::string word;
-//            while (iss >> word) {
-//                wordList.emplace_back(word.size(), word, wordDamage[playerNumber]);
-//            }
-//            break;
-//        }
-//        lineNumber++;
-//    }
-//}
-
 
 #endif //GAMETOWER1_HERO_H
