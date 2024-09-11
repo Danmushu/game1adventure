@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Assets/Enemies/.enemy4" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/Creature.h" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/FightScene.h" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/GameController.h" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/Interface.h" charset="GBK" />
+    <file url="PROJECT" charset="GBK" />
+  </component>
+</project>
