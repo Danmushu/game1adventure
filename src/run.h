@@ -20,6 +20,7 @@
 #define getIsLocked(x, y) dynamic_cast<Place*>(map.getLocation(x,y))->getIsLocked()
 
 #include <iostream>
+#include <memory>
 #include "Player.h"
 #include "Interface.h"
 #include "Map.h"
@@ -179,7 +180,7 @@ void run(Player &player) {
             case 'e':
             case 'E': {
                 system("cls"); // 清屏
-                printMsg("./Assets/.help"); // 打印帮助信息
+                Interface::printMsg("./assets/.help"); // 打印帮助信息
                 system("pause");
                 Map::printMap(); // 重新打印地图
                 break;
@@ -188,7 +189,7 @@ void run(Player &player) {
             case 'u':
             case 'U': {
                 system("cls"); // 清屏
-                printMsg("./Assets/Enemies/.enemyDescription"); // 打印怪物描述
+                Interface::printMsg("./assets/Enemies/.enemyDescription"); // 打印怪物描述
                 system("pause");
                 Map::printMap(); // 重新打印地图
                 break;
@@ -202,44 +203,44 @@ void run(Player &player) {
                 if (getIsLocked(pos.line, pos.column)) {
                     // 根据地图进度显示不同的内容
                     if (map.getProgress() < 3 && pos.line == 6 && pos.column == 2) {//秘境空间夹层
-                        printMsg("./Assets/Scene/Other/locked.txt");
+                        Interface::printMsg("./assets/Scene/Other/locked.txt");
                     } else if (map.getProgress() == 4 || map.getProgress() == 5) {
-                        printMsg("./Assets/Scene/Default/" + getPlaceName(pos.line, pos.column) + ".txt");
+                        Interface::printMsg("./assets/Scene/Default/" + getPlaceName(pos.line, pos.column) + ".txt");
                     } else {
-                        printMsg(map.getDefaultMsgDir());
+                        Interface::printMsg(map.getDefaultMsgDir());
                     }
                     system("pause");
                 } else {
                     // 若任务已完成，显示默认场景
                     if (getHasDone(pos.line, pos.column)) {
-                        printMsg("./Assets/Scene/Default/" + getPlaceName(pos.line, pos.column) + ".txt");
+                        Interface::printMsg("./assets/Scene/Default/" + getPlaceName(pos.line, pos.column) + ".txt");
                         system("pause");
                     } else {
                         // 根据进度触发不同的场景或战斗
                         if (map.getProgress() == 2 && pos.line == 6 && pos.column == 4) {// 宝光阁
-                            printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
+                            Interface::printMsg("./assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
                             system("pause");
                             system("cls");
                             lastPos = {6, 4}; // 宝光阁
                             pos = {4, 4}; // 秘境二层
-                            printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
+                            Interface::printMsg("./assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
                         } else if (map.getProgress() == 2 && pos.line == 4 && pos.column == 4) {// 秘境二层
                             lastPos = {6, 4};// 宝光阁
                             pos = {6, 4};// 宝光阁
-                            printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
+                            Interface::printMsg("./assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
                             system("pause");
                             system("cls");
                             pos = {4, 4};// 秘境二层
-                            printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
+                            Interface::printMsg("./assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
                         } else if (map.getProgress() == 3 && pos.line != 2 && pos.column != 4) {// 秘境三层
-                            printMsg("./Assets/Scene/Other/Faith.txt");
+                            Interface::printMsg("./assets/Scene/Other/Faith.txt");
                         } else if (map.getProgress() >= 4 && pos.line == 6 && pos.column == 4) {// 宝光阁
                             if (getIsLocked(0, 4)) // 秘境核心
-                                printMsg("./Assets/Scene/Other/Final.txt");
-                            else printMsg("./Assets/Scene/Default/" + getPlaceName(pos.line, pos.column) + ".txt");
+                                Interface::printMsg("./assets/Scene/Other/Final.txt");
+                            else Interface::printMsg("./assets/Scene/Default/" + getPlaceName(pos.line, pos.column) + ".txt");
                         } else if (map.getProgress() < 4 && pos.line == 0 && pos.column == 4) {// 秘境核心
-                            printMsg("./Assets/Scene/Other/check.txt");
-                        } else printMsg("./Assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
+                            Interface::printMsg("./assets/Scene/Other/check.txt");
+                        } else Interface::printMsg("./assets/Scene/Background/" + getPlaceName(pos.line, pos.column) + ".txt");
                         system("pause");
 
                         // 特定情节推进和状态更新
@@ -258,8 +259,11 @@ void run(Player &player) {
                             int backupCurrHP = player.getCurrHP();
 
                             // 创建战斗场景
-                            auto *currFightScene = new Fight(getPlaceName(pos.line, pos.column), map.getProgress());
-                            currFightScene->loadScene(player); // 加载场景
+                            shared_ptr<Fight> curFight(new Fight(getPlaceName(pos.line, pos.column), map.getProgress())); //= new Fight(getPlaceName(pos.line, pos.column), map.getProgress());
+
+//                            auto *currFightScene = new Fight(getPlaceName(pos.line, pos.column), map.getProgress());
+//                            currFightScene->loadScene(player); // 加载场景
+                            curFight->loadScene(player);
 
                             // 检查战斗结果
                             if (Fight::checkWin(player)) {
@@ -269,20 +273,20 @@ void run(Player &player) {
                                 player.setLevel(level);
                                 map.setHasDone(pos.line, pos.column); // 更新任务完成状态
                                 cout << "我";
-                                printMsg("./Assets/Scene/Other/victory.txt");
+                                Interface::printMsg("./assets/Scene/Other/victory.txt");
                                 system("cls");
                                 cout << "我";
-                                printMsg("./Assets/Scene/AfterFight/" + getPlaceName(pos.line, pos.column) + ".txt");
+                                Interface::printMsg("./assets/Scene/AfterFight/" + getPlaceName(pos.line, pos.column) + ".txt");
                                 system("pause");
                             } else {
                                 system("cls");
-                                printMsg("./Assets/Scene/Other/Failed.txt");
+                                Interface::printMsg("./assets/Scene/Other/Failed.txt");
                                 player.setCurrHP(backupCurrHP); // 恢复玩家状态
                                 player.setBackpack(backupBackpack);
 
                                 system("pause");
                             }
-                            delete currFightScene; // 释放内存
+                            //delete currFightScene; // 释放内存
                         }
                     }
                 }

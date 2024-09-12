@@ -2,23 +2,25 @@
 #define GAMETOWER1_BACKPACK_H
 
 #include "Item.h"
+#include <utility>
 #include <vector>
 #include <iostream>
 
 class Backpack {
+private:
+    std::vector<std::pair<Item, int>> items;
+    int size{};
 public:
     Backpack() = default;
     ~Backpack() = default;
 
-    void addItem(Item item);
+    void addItem(const Item& item);
 
     void showItemList(std::ostream &os = std::cout) const;
 
-    void loadItemList(string name, int effect, int cooldown, int num);
+    void loadItemList(string name, int effect, int cooldown);
 
     void printItemList(bool atFightScene);
-
-    std::vector<std::pair<Item, int>> &getItemList();
 
     int getItemClock(int index);
 
@@ -30,7 +32,7 @@ public:
 
     void progress4();
 
-    bool isItemExist(int index);
+    bool isItemExist(int index) const;
 
     void clear() {
         items.clear();
@@ -38,11 +40,7 @@ public:
     }
 
     //重载=运算符
-    Backpack &operator=(const Backpack &backpack) {
-        this->items = backpack.items;
-        this->size = backpack.size;
-        return *this;
-    }
+    Backpack &operator=(const Backpack &backpack) = default;
 
     //重载==运算符
     bool operator==(const Backpack &backpack) {
@@ -60,32 +58,25 @@ public:
         }
         return isEqual;
     }
-
-private:
-    std::vector<std::pair<Item, int>> items;
-    int size;
-
-
-
 };
 
 void Backpack::showItemList(std::ostream &os) const {
-    for (auto item: items) {
+    for (const auto& item: items) {
         os << item.first.getName() << " " << item.first.getEffect() << " "
         << item.first.getCooldown() << " " << item.second << " " << std::endl;
     }
     os << "#" << std::endl;
 }
 
-void Backpack::loadItemList(std::string name, int effect, int cooldown, int num) {
-    addItem(Item(name, effect, cooldown));
+void Backpack::loadItemList(std::string name, int effect, int cooldown) {
+    addItem(Item(std::move(name), effect, cooldown));
 }
 
 void Backpack::printItemList(bool atFightScene) {
-    PosControl::setPos(9, 17);
+    Interface::setPos(9, 17);
     cout <<"[物品]";
     for (int i = 0; i < size; i++) {
-        PosControl::setPos(10+i,17);
+        Interface::setPos(10 + i, 17);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
         std::cout << "\t" << "[" << i << "] ";
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
@@ -104,7 +95,7 @@ void Backpack::printItemList(bool atFightScene) {
 
 }
 
-void Backpack::addItem(Item item) {
+void Backpack::addItem(const Item& item) {
     for (auto &i: items) {
         if (i.first.getName() == item.getName()) {
             i.second++;
@@ -130,15 +121,13 @@ void Backpack::progress0() {
     }
 }
 
-// 到剧情进行到战前准备营地时，对两个物品addItem即可。物品说明和使用说明都包含在Background/战前准备营地.txt里了。
+// 到剧情进行到战前准备营地时，对两个物品addItem即可。物品说明和使用说明都包含在Background/秘境夹层空间.txt里了。
 void Backpack::progress4() {
-
     // 创建3个 MysteriousPotion 物品，每个回血50，冷却20秒
     for (int i = 0; i < 3; ++i) {
         Item mysteriousPotion("大回春丹", 50, 20);
         addItem(mysteriousPotion);
     }
-
     // 创建2个 WormVirus.exe 物品，每个让怪物扣血80，冷却30秒
     for (int i = 0; i < 2; ++i) {
         Item wormVirus("大爆破灵宝", -80, 30);
@@ -153,16 +142,16 @@ int Backpack::getItemClock(int index) {
 bool Backpack::useItem(int index) {
     if (items[index].second) {
         items[index].second--;
-        return 0;
+        return false;
     }
-    return 1;
+    return true;
 }
 
 int Backpack::getItemEffect(int index) {
     return items[index].first.getEffect();
 }
 
-bool Backpack::isItemExist(int index) {
+bool Backpack::isItemExist(int index) const {
     return size > index;
 }
 

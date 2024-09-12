@@ -5,16 +5,15 @@
 #include <string>
 #include <vector>
 #include "Creature.h"
-#include "Stripe.h"
+#include "Bar.h"
 
 class Monster : public Creature {
 public:
     Monster() = default;
     Monster(int monsterNumber);
-    Monster(int HP, int damage, std::vector<Stripe> wordList, const std::string description);
+//    Monster(int HP, int damage, std::vector<Bar> wordList, const std::string description);
 
     int getDamage() const { return damage; }
-    std::string des() { return this->description; }
     void readMonsterData(int monsterNumber);
     ~Monster() override = default;
 private:
@@ -27,23 +26,26 @@ Monster::Monster(int monsterNumber) {
 }
 
 void Monster::readMonsterData(int monsterNumber) {
+    // 转换成字符串
     std::string numberString = std::to_string(monsterNumber);
-    std::string filePath = "./Assets/Enemies/.enemy" + numberString;
+    // 数据文件的路径
+    std::string filePath = "./assets/Enemies/.enemy" + numberString;
     std::ifstream file(filePath);
+    // 定义一个字符串变量用于读取文件中的单词
     std::string word;
-    wordList.clear();
+    // 清空bar
+    bar.clear();
+    // 读取怪物数据
     cout << "reading monster ..." << endl;
+    // 读取怪物名字、生命值和攻击力
     file >> name;
     file >> hp;
     file >> damage;
-
+    // 将读取到的生命值赋值给当前生命值
     currHP = hp;
+    // 读取怪物的描述，std::ws是一个操纵符，用于吸收前导空白字符
     std::getline(file >> std::ws, description);
     file >> level;
-
-//    while (file >> word)
-//        wordList.emplace_back(word.size(), word, damage);
-//    for(auto &i:wordList) cout<<i.getName()<<endl;
 }
 
 #endif //GAMETOWER1_MONSTER_H

@@ -11,11 +11,11 @@
 using namespace std;
 using std::cout;
 
-class Stripe {
+class Bar {
 public:
-    Stripe();
+    Bar();
 
-    Stripe(int length, std::string word, char effect);
+    Bar(int length, std::string word, char effect);
 
     void putWord(const string, int level);
 
@@ -50,7 +50,7 @@ public:
 
     std::string getName() const { return word; }
 
-    ~Stripe() = default;
+    ~Bar() = default;
 
 private:
     std::string word;
@@ -63,20 +63,19 @@ private:
 
 };
 
-Stripe::Stripe() {
+Bar::Bar() {
 
 }
 
 
 
-void Stripe::changeState(bool state) {
+void Bar::changeState(bool state) {
 
 }
 
 // 增加根据等级增加伤害的逻辑
-void Stripe::putWord(const string s, int level) {
+void Bar::putWord(const string s, int level) {
     if (s.empty()){
-
         random_device seed;//硬件生成随机数种子
         ranlux48 engine(seed());//利用种子生成随机数引擎
         uniform_int_distribution<> distrib(0, 17);//设置随机数范围，并为均匀分布
@@ -112,7 +111,7 @@ void Stripe::putWord(const string s, int level) {
 
     this->length = 20;
 
-    PosControl::setPos(7, (int) (40 - length/2));
+    Interface::setPos(7, (int) (40 - length / 2));
     for (int i = 0; i < length; i++) {
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color[i]);
         cout << word[i];
@@ -120,11 +119,11 @@ void Stripe::putWord(const string s, int level) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
 }
 
-void Stripe::changeColor(int pos, int co) {
+void Bar::changeColor(int pos, int co) {
     color[pos] = co;
 }
 
-Stripe::Stripe(int length, std::string word, char effect) {
+Bar::Bar(int length, std::string word, char effect) {
     this->length = 20;
     this->effect = effect;
     this->word = word;

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <memory>
 
 #include "Location.h"
 
@@ -17,6 +18,7 @@ public:
     Map();  // 构造函数，初始化地图
     ~Map() = default;  // 默认析构函数
     static void printMap();  // 静态函数，用于在控制台中打印地图
+//    std::shared_ptr<Location> getLocation(int line, int column) const { return locations[line][column]; }  // 获取指定位置的 Location 对象
     Location *getLocation(int line, int column) const { return locations[line][column]; }  // 获取指定位置的 Location 对象
     void loadMap(std::istream &is = std::cin);  // 从输入流中加载地图状态
     void showMap(std::ostream &os = std::cout);  // 将地图状态输出到输出流中
@@ -32,7 +34,7 @@ public:
 private:
     Location *locations[10][10]{};  // 10x10的 Location 指针数组，用于存储地图位置对象
     int currProgress = 0;  // 当前游戏进度
-    string currDefaultMsgDir = "./Assets/Scene/Other/BeforeTheGate.txt";  // 当前默认消息文件路径
+    string currDefaultMsgDir = "./assets/Scene/Other/BeforeTheGate.txt";  // 当前默认消息文件路径
 };
 
 // Map 类构造函数，初始化地图位置对象
@@ -75,8 +77,8 @@ Map::Map() {
 // 静态函数，用于在控制台中打印地图
 void Map::printMap(){
     system("cls");  // 清除控制台内容
-    PosControl::setPos(0, 0);  // 将光标设置到控制台的左上角
-    std::ifstream mapFile("./Assets/.map");  // 打开存储地图图像的文件
+    Interface::setPos(0, 0);  // 将光标设置到控制台的左上角
+    std::ifstream mapFile("./assets/.map");  // 打开存储地图图像的文件
     char map;
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);  // 设置文本颜色为白色
     while (mapFile.get(map)) {  // 逐字符读取并打印地图
@@ -86,8 +88,8 @@ void Map::printMap(){
     mapFile.close();  // 关闭地图文件
 
     // 用灰色标记道路路径
-    PosControl::setPos(0, 0);  // 将光标设置到控制台的左上角
-    std::ifstream pathFile("./Assets/.map_path");  // 打开存储道路路径的文件
+    Interface::setPos(0, 0);  // 将光标设置到控制台的左上角
+    std::ifstream pathFile("./assets/.map_path");  // 打开存储道路路径的文件
     char path;
     while (pathFile.get(path)) {  // 逐字符读取并打印路径
         if (path != ' ') {  // 如果不是空格
@@ -113,7 +115,7 @@ void Map::printMap(){
     cout << "\033[11;47H秘境三层";  // 在特定位置显示秘境三层
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);  // 恢复文本颜色为默认颜色
 
-    PosControl::setPos(0, 0);  // 将光标设置到控制台的左上角
+    Interface::setPos(0, 0);  // 将光标设置到控制台的左上角
 }
 
 // 从输入流中加载地图状态，包括任务完成状态和锁定状态
@@ -133,7 +135,9 @@ void Map::showMap(std::ostream &os) {
         {
             if (locations[i][j]->isPlace())  // 如果当前位置是 Place 对象
             {
-                Place *place = dynamic_cast<Place*>(locations[i][j]);  // 将 Location 对象转换为 Place 对象
+                // 智能指针
+                std::shared_ptr<Place> place(dynamic_cast<Place*>(locations[i][j]));// 将 Location 对象转换为 Place 对象
+//                Place *place = dynamic_cast<Place*>(locations[i][j]);
                 os << i << " " << j << " " << place->getHasDone() << " " << place->getIsLocked() << endl;  // 输出位置信息
             }
         }
@@ -188,16 +192,16 @@ void Map::setProgress(int progress) {
     // 根据当前进度设置默认消息文件路径
     switch (progress) {
         case 0:
-            currDefaultMsgDir = "./Assets/Scene/Other/BeforeTheGate.txt";  // 设置为进门前消息文件
+            currDefaultMsgDir = "./assets/Scene/Other/BeforeTheGate.txt";  // 设置为进门前消息文件
             break;
         case 1:
-            currDefaultMsgDir = "./Assets/Scene/Other/BeforeTheFirstLayer.txt";  // 设置为进迎新大厅前消息文件
+            currDefaultMsgDir = "./assets/Scene/Other/BeforeTheFirstLayer.txt";  // 设置为进迎新大厅前消息文件
             break;
         case 2:
-            currDefaultMsgDir = "./Assets/Scene/Other/BeforeTheSecondLayer.txt";  // 设置为探险前消息文件
+            currDefaultMsgDir = "./assets/Scene/Other/BeforeTheSecondLayer.txt";  // 设置为探险前消息文件
             break;
         case 3:
-            currDefaultMsgDir = "./Assets/Scene/Other/Faith.txt";  // 设置为战斗意志消息文件
+            currDefaultMsgDir = "./assets/Scene/Other/Faith.txt";  // 设置为战斗意志消息文件
             break;
         case 4:
         case 5:

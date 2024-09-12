@@ -21,13 +21,13 @@ public:
     void resetCurrHP(){ currHP = hp; }
     int getLevel(){ return level;}
     void setLevel(int level){ this->level = level; }
-    const std::vector<Stripe>& deliverWord() { return this->wordList; };
+    const std::vector<Bar>& deliverWord() { return this->bar; };
 
     void init();
 protected:
     int hp; // health point
     std::string name;
-    std::vector<Stripe> wordList;
+    std::vector<Bar> bar;
     int currHP{};
     int level;//用来决定战斗难度
 
@@ -35,8 +35,8 @@ protected:
 
 void Creature::init() {
 
-    this->wordList = vector<Stripe>();
-    this->wordList.emplace_back(20, "", '1');
+    this->bar = vector<Bar>();
+    this->bar.emplace_back(20, "", '1');
 }
 
 #endif //GAMETOWER_CREATURE_H

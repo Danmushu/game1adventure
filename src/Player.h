@@ -6,7 +6,7 @@
 #include <conio.h>
 #include <sstream>
 #include "Backpack.h"
-#include "Stripe.h"
+#include "Bar.h"
 #include "Creature.h"
 #include "Map.h"
 #include "Interface.h"
@@ -46,36 +46,6 @@ public:
         pos.column = column;
     }
 
-//    void playerWordlist(int playerNumber); //读取玩家攻击词
-    void showWordList(std::ostream &os = std::cout) const {
-        for (Stripe word: wordList) {
-            os << word.getLength() << " " << word.getName() << " " << word.getEffect() << std::endl;
-        }
-        os << "0" << std::endl;
-    }
-
-    void printWordList() const {
-        int i = 1;
-        for (Stripe word: wordList) {
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
-            cout << "[" << i << "] ";
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
-            cout << word.getName() << " " << "伤害：" << word.getEffect() << endl;
-            i++;
-        }
-        cout << endl;
-    }
-
-    void loadWordList(int length, string name, int effect) {
-        Stripe word(length, name, effect);
-        wordList.push_back(word);
-    }
-
-    bool givenItem() {
-        if (itemChance) itemChance--;
-        else return 1;
-        return 0;
-    }
 private:
     //应该用不到这个东西。玩家伤害结算都靠每个word的wordDamage
     Map map;
@@ -93,7 +63,7 @@ Player::Player(string name) : Creature(100, name) {
 }
 
 void Player::printStatus() const {
-    PosControl::setPos(0, 0);
+    Interface::setPos(0, 0);
     cout << "\33[46;33m" << "木" << "\33[0m" << endl;
     cout << endl;
     cout << "\33[46;33m" << "HP: " << "\33[0m" << currHP << endl;

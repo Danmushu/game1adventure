@@ -8,7 +8,7 @@
 #include <ctime>
 #include <random>
 #include "Interface.h"
-#include "Stripe.h"
+#include "Bar.h"
 #include "Player.h"
 #include "Map.h"
 #include "run.h"
@@ -19,24 +19,12 @@ const int ColorDefault = 8;
 
 void cls();
 
-void updatePrint(std::vector<Stripe> upper, std::vector<Stripe> lower);
-
-int deeper(int &t, Stripe &word, std::vector<Stripe> &upper, std::vector<Stripe> &lower);
-
-
 class Fight {
 public:
     Fight(string name, int progress) : name(std::move(name)), monster(progress + 1) {};
 
-//    Fight(std::string id, int b);
-
     void loadScene(Player &player);//外部调用接口
     static bool checkWin(Player &player);
-    //字符下落，由loadScene调用
-
-    //调控打字变色并check，由loadScene调用
-    //检查真言
-//    int checkWord(string s);
 
     ~Fight() = default;
 
@@ -48,10 +36,11 @@ private:
 
     void showHP(Player &player);
 
-    void typeAndColor(std::vector<Stripe> &upper, std::vector<Stripe> &lower, Player &player);
+    void typeAndColor(std::vector<Bar> &upper, std::vector<Bar> &lower, Player &player);
 
     void useItem(Player &player, int effect);
 
+    void updateScene(Player& player);
 
     static void showPlayerInfo(const string& msg);
 
@@ -60,10 +49,10 @@ private:
 
 void Fight::showHP(Player &player)     {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
-//    PosControl::setPos(16, 1);
-    PosControl::setPos(3,11);
+//    Interface::setPos(16, 1);
+    Interface::setPos(3, 11);
     cout << monster.getName() ;
-    PosControl::setPos(4,11);
+    Interface::setPos(4, 11);
     cout<< "[气血]";
     int curhp, HP;
     curhp = std::max(0, monster.getCurrHP()), HP = monster.getHP();
@@ -73,10 +62,10 @@ void Fight::showHP(Player &player)     {
         cout << '_';
     }
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
-//    PosControl::setPos(16, 1);
-    PosControl::setPos(3, 11);
+//    Interface::setPos(16, 1);
+    Interface::setPos(3, 11);
     cout << monster.getName() ;
-    PosControl::setPos(4,11);
+    Interface::setPos(4, 11);
     cout << "[气血]";
     cout << curhp << '/' << HP;
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 4);
@@ -85,10 +74,10 @@ void Fight::showHP(Player &player)     {
     }
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 
-    PosControl::setPos(5, 11);
+    Interface::setPos(5, 11);
     curhp = std::max(0, player.getCurrHP()), HP = player.getHP();
     cout << player.getName();
-    PosControl::setPos(6, 11);
+    Interface::setPos(6, 11);
     cout<<"[气血]";
     cout << curhp << '/' << HP;
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 4);
@@ -97,9 +86,9 @@ void Fight::showHP(Player &player)     {
     }
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 
-    PosControl::setPos(5, 11);
+    Interface::setPos(5, 11);
     cout << player.getName() ;
-    PosControl::setPos(6,11);
+    Interface::setPos(6, 11);
     cout << "[气血]";
     cout << curhp << '/' << HP;
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 4);
@@ -113,8 +102,8 @@ void Fight::showHP(Player &player)     {
 //外部接口
 void Fight::loadScene(Player &player) {
     showScene(player.getBackpack());//边框绘制
-    PosControl::HideCursor();//隐藏光标
-    std::vector<Stripe> upper, lower;//加载打击条
+    Interface::HideCursor();//隐藏光标
+    std::vector<Bar> upper, lower;//加载打击条
     upper = monster.deliverWord();
     player.init();
     lower = player.deliverWord();
@@ -122,9 +111,10 @@ void Fight::loadScene(Player &player) {
     typeAndColor(upper, lower, player);//核心函数，判断打击
 }
 
-void Fight::typeAndColor(std::vector<Stripe> &upper, std::vector<Stripe> &lower, Player &player) {
-    int level = player.getLevel();
-    lower[0].putWord("", level);
+void Fight::typeAndColor(std::vector<Bar> &upper, std::vector<Bar> &lower, Player &player) {
+    int levelPlayer = player.getLevel();
+    int levelMonster = monster.getLevel();
+    lower[0].putWord("", levelPlayer);
     char next = ' '; //next是下一个键盘敲得字符
     int itemClock[10] = {0};
     int Direction = 1; // 光标步进方向
@@ -132,43 +122,34 @@ void Fight::typeAndColor(std::vector<Stripe> &upper, std::vector<Stripe> &lower,
     int attackInterval = 8000;
     int sleep = 30;
     while (player.getCurrHP() > 0 && monster.getCurrHP() > 0) {//战斗循环，只要都没死就一直进行
-
-        Sleep(sleep);
-
-
+        Sleep(sleep-levelMonster);
         next = ' ';
         if (_kbhit()) {//get键盘字符
             next = _getch();
         }
-
         // 电脑对玩家造成伤害
         char code;
         // 玩家逻辑
         if (next == '\r' || next == '\n' || next == 'a') {
             // 造成伤寒
-
             code = lower[0].getString()[lower[0].getCur()];
-
-
             if (code != '0' && next != 'a') {
-
-                int damage = ((int)code - 48) * 2 + randInt(0, 1);
+                int damage = ((int)code - 48) * 2 + Interface::randInt(0, 1);
                 monster.getDamaged(damage);
                 showHP(player);
                 player.getBackpack().printItemList(true);
-
-
                 if (monster.getCurrHP() <= 0) {
                     return;
                 }
+                //闪烁的逻辑
                 if (code == '1') {
                     for (int j = 0; j < 10; j++){
                         lower[0].changeColor(lower[0].getCur(), 4); //
-                        lower[0].putWord(lower[0].getString(), level);
+                        lower[0].putWord(lower[0].getString(), levelPlayer);
                         Sleep(30);
 
                         lower[0].changeColor(lower[0].getCur(), 8); //
-                        lower[0].putWord(lower[0].getString(), level);
+                        lower[0].putWord(lower[0].getString(), levelPlayer);
                         Sleep(30);
                     }
 
@@ -176,24 +157,22 @@ void Fight::typeAndColor(std::vector<Stripe> &upper, std::vector<Stripe> &lower,
                 } else{
                     for (int j = 0; j < 10; j++){
                         lower[0].changeColor(lower[0].getCur(), 4); //
-                        lower[0].putWord(lower[0].getString(), level);
+                        lower[0].putWord(lower[0].getString(), levelPlayer);
                         Sleep(40);
 
                         lower[0].changeColor(lower[0].getCur(), 6);
-                        lower[0].putWord(lower[0].getString(), level);
+                        lower[0].putWord(lower[0].getString(), levelPlayer);
                         Sleep(40);
                     }
                 }
-
-                lower[0].putWord(lower[0].getString(), level);
+                lower[0].putWord(lower[0].getString(), levelPlayer);
                 showPlayerInfo("命中敌人! 造成" + std::to_string(damage)  + "点伤害");
                 Sleep(500);
                 cls();
                 showHP(player);
                 showPlayerInfo("按下 <Enter> 攻击");
                 player.getBackpack().printItemList(true);
-                lower[0].putWord("", level);
-
+                lower[0].putWord("", levelPlayer);
             }else if (next == 'a') {
                 monster.getDamaged(monster.getCurrHP());
                 showHP(player);
@@ -202,27 +181,22 @@ void Fight::typeAndColor(std::vector<Stripe> &upper, std::vector<Stripe> &lower,
                     return;
                 }
                 Sleep(500);
-                lower[0].putWord("", level);
-
+                lower[0].putWord("", levelPlayer);
             } else{
                 // 没造成伤害 被怪物攻击
-                // 更新指针 更新lower[0]
+                // 更新光标 更新lower[0]
                 lower[0].changeColor(lower[0].getCur(), 1); // 变为1
                 player.setCurrHP(player.getCurrHP() - monster.getDamage());
                 showHP(player);
-                lower[0].putWord(lower[0].getString(), level);
+                lower[0].putWord(lower[0].getString(), levelPlayer);
                 showPlayerInfo("未命中 反击扣除" + std::to_string(monster.getDamage()) + "点生命");
                 Sleep(500);
                 showHP(player);
-                cls();
-                showHP(player);
-                player.getBackpack().printItemList(true);
+                updateScene(player);
                 showPlayerInfo("按下 <Enter> 攻击");
-                lower[0].putWord("", level);
+                lower[0].putWord("", levelPlayer);
             };  // 当前位置
-
             Direction = 1;
-
         } else if (next <= '9' && next >= '0') {  // 使用道具
 
             if (itemClock[next - '0'] == 0) {
@@ -236,13 +210,9 @@ void Fight::typeAndColor(std::vector<Stripe> &upper, std::vector<Stripe> &lower,
                 itemClock[next - '0'] = player.getBackpack().getItemClock(next - '0');
                 showPlayerInfo("使用道具");
                 Sleep(500);
-                cls();
-                showHP(player);
-                player.getBackpack().printItemList(true);
+                updateScene(player);
             }
-
         }else {  // 按键无对应
-            //
             int cur = lower[0].getCur();
             if (cur >= lower[0].getLength() - 1){
                 Direction = -1;
@@ -263,17 +233,13 @@ void Fight::typeAndColor(std::vector<Stripe> &upper, std::vector<Stripe> &lower,
                 lower[0].changeColor(cur, ColorDefault);
             }
         }
-
-
         // 道具逻辑判断
         for (int & i : itemClock) {
             if (i > 0) {
                 i--;
             }
         }
-
-        lower[0].putWord(lower[0].getString(), level);
-
+        lower[0].putWord(lower[0].getString(), levelPlayer);
         // 怪物攻击判断
         interval += sleep;
         if (interval > attackInterval){
@@ -283,22 +249,19 @@ void Fight::typeAndColor(std::vector<Stripe> &upper, std::vector<Stripe> &lower,
             showHP(player);
             player.getBackpack().printItemList(true);
             Sleep(500);
-            cls();
-            showHP(player);
-            player.getBackpack().printItemList(true);
+            updateScene(player);
             continue;
         }
-
     }
 }
 
 void Fight::showPlayerInfo (const string& msg) {
-    PosControl::setPos(8, 52);
+    Interface::setPos(8, 52);
     cout << msg;
 }
 
 void Fight::showMonsterInfo (const string& msg) {
-    PosControl::setPos(5,  52);
+    Interface::setPos(5, 52);
     cout << msg;
 }
 
@@ -316,20 +279,20 @@ void Fight::useItem(Player &player, int effect) {
 
 void Fight::showScene(Backpack &backpack) {
     system("cls");
-    ifstream sceneFile("./Assets/.fightFrame");
+    ifstream sceneFile("./assets/.fightFrame");
     string scene;
     while (getline(sceneFile, scene)) {
         cout << scene << endl;
     }
     sceneFile.close();
-    PosControl::setPos(14, 0);
-    printMsg("./Assets/Scene/BeforeFight/" + name + ".txt", true);
-    PosControl::setPos(14, 0);
+    Interface::setPos(14, 0);
+    Interface::printMsg("./assets/Scene/BeforeFight/" + name + ".txt", true);
+    Interface::setPos(14, 0);
     // 清除四行
     for (int i = 0; i < 4; i++) {
         cout << "\33[2K" << endl;
     }
-    PosControl::setPos(10, 17);
+    Interface::setPos(10, 17);
     backpack.printItemList(true);
 }
 
@@ -340,22 +303,18 @@ bool Fight::checkWin(Player &player) {
 
 void cls() {
     for (int i = 2; i <= 11; i++) {
-        PosControl::setPos(i, 1);
+        Interface::setPos(i, 1);
         for (int j = 1; j < 105; j++) {
             cout << ' ';
         }
     }
 }
-//
-//int Fight::checkWord(string s){
-//    char c;
-//    if (s=='破')
-//    switch(c){
-//
-//        case '':
-//            return 3
-//    }
-//}
+
+void Fight::updateScene(Player& player) {
+    cls();
+    showHP(player);
+    player.getBackpack().printItemList(true);
+}
 
 
 #endif //GAMETOWER1_FIGHT_SCENE_H

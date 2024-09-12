@@ -11,7 +11,7 @@ void checkValidation(string name, int x) {
     // 验证玩家输入的名字是否合法
     while (name.length() > 15 || name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_") != string::npos) {
         // 如果名字不合法，重新设置光标并提示玩家重新输入
-        PosControl::setPos(x, 0);
+        Interface::setPos(x, 0);
         // 清除当前行内容
         cout << "\33[2K" << endl;
         // 检查名字是否包含非法字符或名字长度是否超过15个字符
@@ -25,7 +25,7 @@ void checkValidation(string name, int x) {
         cin >> name;  // 重新获取玩家输入的名字
     }
     // 清除输入提示行
-    PosControl::setPos(x, 0);
+    Interface::setPos(x, 0);
 }
 
 void helloPlayer(const string& name){
@@ -45,24 +45,26 @@ void helloPlayer(const string& name){
     cout << spaceLine << endl << spaceLine << endl;
 }
 
+
+
 int main() {
     //setDPI();  // 如果需要，可以设置 DPI 缩放，暂时注释掉
-//    PosControl::centerWindow();
-//    PosControl::HideCursor();
+//    Interface::centerWindow();
+//    Interface::HideCursor();
 //    Player player1("123");
 //    Game game1(player1);
 //    game1.newGame();
 //    return 0;
     // 显示欢迎页面
-    welcomePage();
+    Interface::welcomePage();
 
     int x, y;  // 用于存储光标位置的变量
     string name;  // 存储玩家输入的名字
 
     // 获取当前光标位置
-    PosControl::getPos(x, y);
+    Interface::getPos(x, y);
     // 设置光标位置到当前行的起始位置
-    PosControl::setPos(x, 0);
+    Interface::setPos(x, 0);
     // 清除当前行的内容
     cout << "\33[2K";
     // 提示玩家输入名字
@@ -73,7 +75,7 @@ int main() {
     Player player(name);
     Game game(player);
     // 定义游戏主菜单的选项
-    Menu menu[3]{
+    Interface::Menu menu[3]{
             "新游戏",  // 新游戏选项
             "加载游戏",  // 加载游戏选项
             "退出游戏"  // 退出游戏选项
@@ -91,7 +93,7 @@ int main() {
             break;
         case 2:
             // 如果玩家选择了“退出游戏”，则显示退出页面，并退出程序
-            goodbye();
+            Interface::goodbye();
             system("pause");  // 暂停等待用户按键
             return 0;  // 退出程序
     }

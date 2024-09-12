@@ -3,11 +3,12 @@
 #define GAMETOWER1_ITEM_H
 
 #include <iostream>
+#include <utility>
 
 class Item {
 public:
     Item(std::string name, int effect, int cooldown)
-            : name(name), effect(effect), cooldown(cooldown) {}
+            : name(std::move(name)), effect(effect), cooldown(cooldown) {}
     ~Item() = default;
 
     std::string getName() const { return name; }

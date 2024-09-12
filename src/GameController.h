@@ -94,7 +94,7 @@ public:
         if (dataExist(player.getName())) {
             // if data exists, ask for loading
             cout << "数据已存在，是否读取？" << endl;
-            Menu menu[2]{"是","否"};
+            Interface::Menu menu[2]{"是", "否"};
             switch (switcher(menu, 2)) {
                 case 0:
                     break;
@@ -118,7 +118,7 @@ public:
         Map::printMap();  // 打印地图
         run(player);  // 处理地图上的行为
         saveData();  // 保存玩家数据
-        goodbye();  // 显示游戏结束页面
+        Interface::goodbye();  // 显示游戏结束页面
         system("pause");  // 暂停，等待用户操作
     }
 
